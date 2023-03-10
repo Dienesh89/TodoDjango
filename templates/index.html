@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+  <!-- Welcome greet -->
+  {% if user.is_authenticated %}
+  <h1 class="text-2xl px-4 pb-2">Welcome , {{request.user}} !</h1>
+  {% endif %}
+
+<!-- add todo -->
+<section class="px-4">
+  <form action="/addTodo" method="post">
+    <input type="text"
+      class="bg-white rounded border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 text-base outline-none text-gray-700 px-2 leading-8 transition-colors duration-200 ease-in-out cursor-text"
+      required name="task" placeholder="Todo">
+      {% csrf_token %}
+    <input type="submit" name="add" id="add" value="Add" class="border py-1 px-6 rounded bg-green-500 text-white cursor-pointer" />
+  </form>
+</section>
+
+<!-- display todo -->
+<section class="px-4" style="padding-top: 1.2rem;"> <!-- headings -->
+  <div class="flex justify-between">
+   <div class="w-[25%] bg-green-500 text-white rounded text-center flex items-center justify-center">Date</div>
+    <div class="w-[62%] bg-green-500 text-white rounded flex items-center justify-center">
+      Todos
+    </div>
+    <div class="bg-green-500 rounded">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" stroke-width="1.5"
+        stroke="#ffffff" class="w-8 h-8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+
+    </div>
+  </div>
+
+  {% if todos|length == 0 %}
+  <div class="text-center p-4">No Todos here.</div>
+  {% endif %}
+
+  <!-- main display todo -->
+  {% for todo in todos %}
+    <div class="flex justify-between mt-2">
+    	<div class="w-[25%] text-white rounded text-center flex items-center justify-center bg-[#3A9D5E]">
+			<p class="box-border text-xs sm:text-base">{{ todo.taskdate }}</p>
+		</div>
+        <div class="w-[62%] bg-[#3A9D5E] text-white rounded flex items-center text-center px-4 py-2">
+          {{ todo.task }}
+        </div>
+        <div class="bg-[#3A9D5E] rounded flex items-center h-[max-content] cursor-pointer">
+          <form action="/deleteTodo/{{todo.id}}" method="post">
+          {% csrf_token %}
+          <button type="submit">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" class="w-8 h-8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+             </svg>
+            </button>
+          </form>
+        </div>
+    </div>
+     {% endfor %}
+</section>
+<!-- Log out button -->
+{% if user.is_authenticated %}
+<div class="px-4 mt-32 cursor-pointer">
+  <a href="/handleLogout" class="w-[100%] block text-center py-1 rounded bg-green-500 text-white">Logout</a>
+</div>
+{% endif %}
+
+{% endblock body %}
